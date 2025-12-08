@@ -1,0 +1,33 @@
+package com.doan2.QuanLyDiemRenLuyen.Repository;
+
+import com.doan2.QuanLyDiemRenLuyen.Entity.NotificationEntity;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
+import org.springframework.lang.NonNull;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public interface NotificationRepository extends CrudRepository<NotificationEntity,Integer> {
+    NotificationEntity findByNotificationId(int notificationId);
+    @Query("select n from NotificationEntity n where n.managerEntity.managerId = :managerId and facultyEntity.facultyId = :facultyId ")
+    List<NotificationEntity> findAllByManagerId(@Param("managerId") int managerId,@Param("facultyId") int facultyId);
+    @Query("SELECT n FROM NotificationEntity n WHERE n.status = 'open' ORDER BY n.createAt DESC")
+    List<NotificationEntity> findAllOpenNotifications();
+    @Query("""
+        SELECT n,
+               CASE WHEN (nr.id IS NOT NULL) THEN true ELSE false END
+        FROM NotificationEntity n
+        LEFT JOIN NotificationReadEntity nr
+          ON n = nr.notification AND nr.student.studentId = :studentId
+        WHERE n.status = 'open'
+          AND (n.facultyEntity IS NULL OR n.facultyEntity.facultyId = :facultyId)
+        ORDER BY n.createAt DESC
+    """)
+    List<Object[]> findAllWithReadStatusByFaculty(@Param("studentId") int studentId,
+                                                  @Param("facultyId") int facultyId);
+
+
+}
