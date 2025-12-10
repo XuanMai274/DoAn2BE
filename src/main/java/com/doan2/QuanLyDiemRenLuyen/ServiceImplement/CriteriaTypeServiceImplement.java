@@ -1,8 +1,10 @@
 package com.doan2.QuanLyDiemRenLuyen.ServiceImplement;
 
+import com.doan2.QuanLyDiemRenLuyen.DTO.CriteriaDTO;
 import com.doan2.QuanLyDiemRenLuyen.DTO.CriteriaTypeDTO;
 import com.doan2.QuanLyDiemRenLuyen.Entity.CriteriaEntity;
 import com.doan2.QuanLyDiemRenLuyen.Entity.CriteriaTypeEntity;
+import com.doan2.QuanLyDiemRenLuyen.Mapper.CriteriaMapper;
 import com.doan2.QuanLyDiemRenLuyen.Mapper.CriteriaTypeMapper;
 import com.doan2.QuanLyDiemRenLuyen.Repository.CriteriaRepository;
 import com.doan2.QuanLyDiemRenLuyen.Repository.CriteriaTypeRepository;
@@ -19,6 +21,10 @@ public class CriteriaTypeServiceImplement implements CriteriaTypeService {
     CriteriaTypeRepository criteriaTypeRepository;
     @Autowired
     CriteriaTypeMapper criteriaTypeMapper;
+    @Autowired
+    CriteriaRepository criteriaRepository;
+    @Autowired
+    CriteriaMapper criteriaMapper;
     @Override
     public CriteriaTypeDTO addCriteriaType(CriteriaTypeDTO criteriaTypeDTO) {
         try {
@@ -54,4 +60,50 @@ public class CriteriaTypeServiceImplement implements CriteriaTypeService {
         }
         return criteriaTypeDTOS;
     }
+
+    @Override
+    public List<CriteriaTypeDTO> findAllForManager() {
+        List<CriteriaTypeEntity> criteriaTypeEntities=criteriaTypeRepository.findAll();
+        List<CriteriaTypeDTO> criteriaTypeDTOS=new ArrayList<>();
+        for(CriteriaTypeEntity c:criteriaTypeEntities){
+            criteriaTypeDTOS.add(criteriaTypeMapper.toDTO(c));
+        }
+        return criteriaTypeDTOS;
+    }
+
+    @Override
+    public List<CriteriaTypeDTO> findAllByConductFormId(int conductFormId) {
+        // 1. Lấy danh sách loại tiêu chí đã sử dụng
+        List<CriteriaTypeEntity> usedTypes =
+                criteriaTypeRepository.findCriteriaTypesUsedInConductForm(conductFormId);
+
+        // 2. Lấy danh sách tiêu chí đã sử dụng
+        List<CriteriaEntity> usedCriteria =
+                criteriaRepository.findAllCriteriaUsedInConductForm(conductFormId);
+
+        // 3. Chuẩn bị DTO trả về
+        List<CriteriaTypeDTO> result = new ArrayList<>();
+
+        for (CriteriaTypeEntity type : usedTypes) {
+
+            CriteriaTypeDTO dto = criteriaTypeMapper.toDTO(type);
+
+            // Lọc tiêu chí thuộc loại này & có trong conductForm
+            List<CriteriaDTO> filteredCriteria = usedCriteria.stream()
+                    .filter(c -> c.getCriteriaTypeEntity().getCriteriaTypeId()
+                            == type.getCriteriaTypeId())
+                    .map(criteriaMapper::toDTO)
+                    .toList();
+
+            dto.setCriteriaEntityList(filteredCriteria);
+
+            result.add(dto);
+        }
+
+        return result;
+    }
+
 }
+
+
+

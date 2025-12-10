@@ -285,6 +285,28 @@ public class ConductFormAPI {
         }
         return null;
     }
+    //công tác sinh viên chấm điểm
+    @PostMapping("manager1/conductForm/update")
+    public ResponseEntity<ConductFormDTO> updateManager1(@RequestBody ConductFormDTO conductFormDTO){
+        try{
+            // lấy thông tin của người quản lý hiện tại
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication == null || !(authentication.getPrincipal() instanceof CustomeUserDetails)) {
+                return ResponseEntity.badRequest().body((ConductFormDTO) Collections.emptyList());
+            }
+            CustomeUserDetails user = (CustomeUserDetails) authentication.getPrincipal();
+            int managerId= user.getAccountEntity().getManagerEntity().getManagerId();
+            conductFormDTO.setManagerAccept(managerId);
+            ConductFormDTO conductFormDTO1=conductFormService.updateManager(conductFormDTO);
+            if(conductFormDTO1!=null){
+                return ResponseEntity.ok(conductFormDTO1);
+            }
+            ResponseEntity.badRequest();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
     @GetMapping("manager/conductForm/studentId/{studentId}")
     public ResponseEntity<ConductFormDTO> findByStudentId(@PathVariable("studentId") int student){
         try{

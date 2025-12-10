@@ -13,7 +13,7 @@ import java.util.List;
 @Repository
 public interface FacultySemesterRepository extends JpaRepository<FacultySemesterEntity, Integer> {
     FacultySemesterEntity findByFacultyFacultyIdAndSemesterSemesterId(int facultyId, int semesterId);
-    // danh sách học kì đang mở
+    // danh sách học kì đang mở trong thời điểm hiện tại
     @Query("""
             SELECT fs FROM FacultySemesterEntity fs
             WHERE fs.faculty.facultyId = :facultyId
@@ -24,12 +24,19 @@ public interface FacultySemesterRepository extends JpaRepository<FacultySemester
             @Param("facultyId") int facultyId,
             @Param("now") LocalDate now);
     // danh sách học kì đã mở
+//    @Query("""
+//            SELECT fs FROM FacultySemesterEntity fs
+//            WHERE fs.faculty.facultyId = :facultyId
+//            AND fs.isOpen = FALSE
+//            """)
+//    List<FacultySemesterEntity> findSemesterOpened(@Param("facultyId") int facultyId);
+    // lay danh sách học kì đã mở
     @Query("""
-            SELECT fs FROM FacultySemesterEntity fs
-            WHERE fs.faculty.facultyId = :facultyId
-            AND fs.isOpen = FALSE
-            """)
-    List<FacultySemesterEntity> findSemesterOpened(@Param("facultyId") int facultyId);
+        SELECT fs FROM FacultySemesterEntity fs
+        WHERE fs.faculty.facultyId = :facultyId
+        AND (CURRENT_DATE < fs.evaluationStartDate OR CURRENT_DATE > fs.evaluationEndDate)
+    """)
+    List<FacultySemesterEntity> findSemesterClosed(@Param("facultyId") int facultyId);
     // Học kỳ chưa từng mở cho khoa này
     @Query("""
             SELECT s FROM SemesterEntity s

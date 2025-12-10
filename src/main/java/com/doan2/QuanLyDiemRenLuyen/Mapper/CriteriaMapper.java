@@ -20,7 +20,7 @@ public class CriteriaMapper {
         dto.setCriteriaName(entity.getCriteriaName());
         dto.setCriteriaDetail(entity.getCriteria_detail());
         dto.setMaxScore(entity.getMaxScore());
-
+        dto.setActive(entity.isActive());
         // Chỉ map ID + name của loại tiêu chí để tránh vòng lặp
         if (entity.getCriteriaTypeEntity() != null) {
             CriteriaTypeDTO typeDTO = new CriteriaTypeDTO();
@@ -40,7 +40,7 @@ public class CriteriaMapper {
         entity.setCriteriaName(dto.getCriteriaName());
         entity.setCriteria_detail(dto.getCriteriaDetail());
         entity.setMaxScore(dto.getMaxScore());
-
+        entity.setActive(dto.isActive());
         // Map ManyToOne: CriteriaType
         if (dto.getCriteriaTypeEntity() != null) {
             CriteriaTypeEntity typeEntity = new CriteriaTypeEntity();

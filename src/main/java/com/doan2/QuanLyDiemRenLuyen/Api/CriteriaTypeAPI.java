@@ -35,9 +35,22 @@ public class CriteriaTypeAPI {
     public ResponseEntity<Map<String,String>> CriteriaTypeUpdate(@RequestBody CriteriaTypeDTO criteriaTypeDTO){
         return null;
     }
+    //sinh viên
     @GetMapping("/criteriaType/getAll")
-    public ResponseEntity<List<CriteriaTypeDTO>> getAllSemesters() {
-        List<CriteriaTypeDTO> semesters = criteriaTypeService.findAll();
+    public ResponseEntity<List<CriteriaTypeDTO>> getAllCriteriaTypeFor() {
+        List<CriteriaTypeDTO> criteriaTypeDTO = criteriaTypeService.findAll();
+        return ResponseEntity.ok(criteriaTypeDTO);
+    }
+    //admin
+    @GetMapping("/manager1/criteriaType/getAll")
+    public ResponseEntity<List<CriteriaTypeDTO>> getAllCriteriaTypeForManager() {
+        List<CriteriaTypeDTO> semesters = criteriaTypeService.findAllForManager();
+        return ResponseEntity.ok(semesters);
+    }
+    //sinh viên
+    @GetMapping("/student/criteriaType/getAll/{conductFormId}")
+    public ResponseEntity<List<CriteriaTypeDTO>> getAllCriteriaTypeForStudent(@PathVariable("conductFormId") int conductFormId) {
+        List<CriteriaTypeDTO> semesters = criteriaTypeService.findAllByConductFormId(conductFormId);
         return ResponseEntity.ok(semesters);
     }
     @PostMapping("/manager1/criteriaType/update")

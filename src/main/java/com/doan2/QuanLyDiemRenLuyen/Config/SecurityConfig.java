@@ -100,8 +100,8 @@ public class SecurityConfig implements WebMvcConfigurer {
                 .  authorizeHttpRequests( authorize -> authorize
                         .requestMatchers("/authenticate","/public/**").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers("/manager").hasAuthority("MANAGER")
-                        .requestMatchers("/manager1").hasAuthority("MANAGER_1")
+                        .requestMatchers("/manager/**").hasAuthority("MANAGER")
+                        .requestMatchers("/manager1/**").hasAuthority("MANAGER_1")
                         .requestMatchers("/ClassMonitor").hasAuthority("CLASS_MONITOR")
                         .anyRequest().authenticated()
                 )

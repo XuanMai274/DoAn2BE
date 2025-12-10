@@ -13,7 +13,7 @@ import java.util.List;
 public class FacultyAPI {
     @Autowired
     FacultyService facultyService;
-    @GetMapping("/manager/faculty/findAll")
+    @GetMapping("/manager1/faculty/findAll")
     public ResponseEntity<List<FacultyDTO>> findAll(){
         List<FacultyDTO> facultyDTOS=facultyService.findAll();
         return ResponseEntity.ok(facultyDTOS);

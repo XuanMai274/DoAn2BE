@@ -21,8 +21,6 @@ public class SemesterMapper {
         dto.setEndDate(entity.getEndDate());
         dto.setYear(entity.getYear());
         dto.setOpen(entity.isOpen());
-        dto.setEvaluationStartDate(entity.getEvaluationStartDate());
-        dto.setEvaluationEndDate(entity.getEvaluationEndDate());
         return dto;
     }
 
@@ -38,7 +36,7 @@ public class SemesterMapper {
         entity.setStartDate(dto.getStartDate());
         entity.setEndDate(dto.getEndDate());
         entity.setYear(dto.getYear());
-
+        entity.setOpen(dto.isOpen());
         // Thông thường, không set danh sách ConductForm ở đây
         // vì chúng ta chỉ lưu danh sách ID, cần Repository để fetch nếu cần
         // entity.setConductFormEntityList(...);

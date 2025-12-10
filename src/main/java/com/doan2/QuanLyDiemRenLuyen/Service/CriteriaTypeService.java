@@ -9,5 +9,7 @@ import java.util.List;
 public interface CriteriaTypeService {
     CriteriaTypeDTO addCriteriaType(CriteriaTypeDTO criteriaTypeDTO);
     List<CriteriaTypeDTO> findAll();
+    List<CriteriaTypeDTO> findAllForManager();
+    List<CriteriaTypeDTO> findAllByConductFormId(int conductFormId);
     //CriteriaTypeDTO updateCriteriaType(CriteriaTypeDTO criteriaTypeDTO);
 }

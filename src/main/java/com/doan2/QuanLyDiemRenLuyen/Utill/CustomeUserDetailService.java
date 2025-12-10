@@ -28,30 +28,41 @@ public class CustomeUserDetailService implements UserDetailsService {
     StudentService studentService;
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        // goi repo kiểm tra xem username đó có tồn tại trong hệ thong hay không
         AccountEntity accountEntity = accountRepository.findByUsername(username);
-        // kiểm tra xem nếu người dùng không tồn tại trong hệ thống
-        List<GrantedAuthority> grantedAuthorityList;
+
         if (accountEntity == null) {
-            logger.warn("User not found or inactive: {}", username);
-            //return new CustomeUserDetails(null,null);
-            throw new UsernameNotFoundException("User not found");
-        } else {
-            grantedAuthorityList = new ArrayList<>();
-            if (accountEntity.getRole() != null) {
-                if(accountEntity.getRole().getRoleName().equals("STUDENT")){
-                    grantedAuthorityList.add(new SimpleGrantedAuthority(accountEntity.getRole().getRoleName()));
-                    StudentEntity student = accountEntity.getStudentEntity();
-                    if(student.getIsClassMonitor()){
-                        grantedAuthorityList.add(new SimpleGrantedAuthority("CLASS_MONITOR"));
-                    }
-                }
-                else{
-                    grantedAuthorityList.add(new SimpleGrantedAuthority(accountEntity.getRole().getRoleName()));
+            logger.warn("User not found: {}", username);
+            throw new UsernameNotFoundException("Tài khoản không tồn tại");
+        }
+
+        // ========== KIỂM TRA TRẠNG THÁI ENABLE ==========
+        if (Boolean.FALSE.equals(accountEntity.getEnable())) {
+            logger.warn("User disabled: {}", username);
+            throw new UsernameNotFoundException("Tài khoản đã bị khóa");
+        }
+
+        List<GrantedAuthority> grantedAuthorityList = new ArrayList<>();
+
+        // ========== PHÂN QUYỀN ==========
+        if (accountEntity.getRole() != null) {
+
+            // ROLE STUDENT
+            if (accountEntity.getRole().getRoleName().equals("STUDENT")) {
+
+                grantedAuthorityList.add(new SimpleGrantedAuthority("STUDENT"));
+
+                StudentEntity student = accountEntity.getStudentEntity();
+                if (student != null && student.getIsClassMonitor()) {
+                    grantedAuthorityList.add(new SimpleGrantedAuthority("CLASS_MONITOR"));
                 }
 
             }
+            // ROLES khác (MANAGER, ADMIN, ...)
+            else {
+                grantedAuthorityList.add(new SimpleGrantedAuthority(accountEntity.getRole().getRoleName()));
+            }
         }
+
         return new CustomeUserDetails(accountEntity, grantedAuthorityList);
     }
 }

@@ -10,4 +10,5 @@ public interface FacultySemesterService {
     public List<FacultySemesterDTO> findByIsOpenTrue(int facultyId);
     public List<SemesterDTO> availableSemesters(int facultyId);
     public List<FacultySemesterDTO> findSemesterOpened(int facultyId);
+    public FacultySemesterDTO updateBatch(FacultySemesterDTO dto);
 }

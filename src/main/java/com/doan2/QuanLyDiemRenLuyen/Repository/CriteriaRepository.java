@@ -20,6 +20,14 @@ public interface CriteriaRepository extends CrudRepository<CriteriaEntity,Intege
 
     @Query("select c from CriteriaEntity c where c.criteriaTypeEntity.criteriaTypeId = :criteriaTypeId order by c.criteriaId")
     List<CriteriaEntity> findByCriteriaTypeId(@Param("criteriaTypeId") int criteriaTypeId);
+
+    // lấy lên danh sách các tiêu chí theo phiếu rèn luyện
+    @Query("""
+        SELECT DISTINCT c FROM CriteriaEntity c
+        JOIN c.conductFormDetailEntityList d
+        WHERE d.conductFormEntity.conductFormId = :conductFormId
+    """)
+    List<CriteriaEntity> findAllCriteriaUsedInConductForm(@Param("conductFormId") int conductFormId);
 //    List<CriteriaEntity> findAll();
 //    CriteriaEntity findByCriteriaId(int criteriaId);
 //    @Query("select c from CriteriaEntity c where c.criteriaTypeEntity.criteriaTypeId = :criteriaTypeId")

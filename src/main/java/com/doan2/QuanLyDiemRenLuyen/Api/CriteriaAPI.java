@@ -42,7 +42,9 @@ public class CriteriaAPI {
     }
     @PostMapping("/manager1/criteria/update")
     public ResponseEntity<CriteriaDTO> update(@RequestBody CriteriaDTO criteriaDTO){
+        System.out.println("update criteria"+criteriaDTO);
         CriteriaDTO criteriaDTO1=criteriaService.addCriteria(criteriaDTO);
+
         return ResponseEntity.ok(criteriaDTO1);
     }
     @GetMapping("/criteria/getByType/{criteriaTypeId}")

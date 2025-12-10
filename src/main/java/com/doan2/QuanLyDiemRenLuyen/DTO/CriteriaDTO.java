@@ -11,7 +11,7 @@ public class CriteriaDTO {
     private String criteriaName;
     private String criteriaDetail;
     private int maxScore;
-
+    private boolean isActive;
     // Quan hệ
     private CriteriaTypeDTO criteriaTypeEntity;
     private List<ConductFormDetailDTO> conductFormDetailEntityList;

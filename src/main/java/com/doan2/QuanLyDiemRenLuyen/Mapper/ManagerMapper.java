@@ -18,7 +18,7 @@ public class ManagerMapper {
         dto.setEmail(entity.getEmail());
         dto.setPhoneNumber(entity.getPhoneNumber());
         dto.setStatus(entity.getStatus());
-
+        dto.setAvatarUrl(entity.getAvatarUrl());
         // Faculty
         if (entity.getFacultyEntity() != null) {
             FacultyDTO facultyDTO = new FacultyDTO();
@@ -38,17 +38,17 @@ public class ManagerMapper {
         }
 
         // Notification list
-        if (entity.getNotificationEntity() != null) {
-            dto.setNotificationEntity(
-                    entity.getNotificationEntity().stream().map(notification -> {
-                        NotificationDTO n = new NotificationDTO();
-                        n.setNotificationId(notification.getNotificationId());
-                        n.setTitle(notification.getTitle());
-                        n.setContent(notification.getContent());
-                        return n;
-                    }).collect(Collectors.toList())
-            );
-        }
+//        if (entity.getNotificationEntity() != null) {
+//            dto.setNotificationEntity(
+//                    entity.getNotificationEntity().stream().map(notification -> {
+//                        NotificationDTO n = new NotificationDTO();
+//                        n.setNotificationId(notification.getNotificationId());
+//                        n.setTitle(notification.getTitle());
+//                        n.setContent(notification.getContent());
+//                        return n;
+//                    }).collect(Collectors.toList())
+//            );
+//        }
 
         return dto;
     }

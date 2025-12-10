@@ -91,12 +91,49 @@ public class FacultySemesterServiceImplement implements FacultySemesterService {
 
     @Override
     public List<FacultySemesterDTO> findSemesterOpened(int facultyId) {
-        List<FacultySemesterEntity> list = facultySemesterRepository.findSemesterOpened(facultyId);
+        List<FacultySemesterEntity> list = facultySemesterRepository.findSemesterClosed(facultyId);
         List<FacultySemesterDTO> result = new ArrayList<>();
         for (FacultySemesterEntity fs : list) {
             result.add(facultySemesterMapper.toDTO(fs));
         }
         return result;
+    }
+
+    @Override
+    public FacultySemesterDTO updateBatch(FacultySemesterDTO dto) {
+        // Lấy khoa
+        FacultyEntity faculty = facultyRepository.findByFacultyId(dto.getFacultyDTO().getFacultyId());
+        if (faculty == null) {
+            return null;
+        }
+
+        // Lấy học kỳ
+        SemesterEntity semester = semesterRepository.findBySemesterId(dto.getSemesterDTO().getSemesterId());
+        if (semester == null) {
+            return null;
+        }
+
+        // Lấy bản ghi FacultySemester hiện tại
+        FacultySemesterEntity fs = facultySemesterRepository
+                .findByFacultyFacultyIdAndSemesterSemesterId(faculty.getFacultyId(), semester.getSemesterId());
+        // Cập nhật thời gian bắt đầu: nếu truyền null giữ nguyên
+        if (dto.getEvaluationStartDate() != null) {
+            fs.setEvaluationStartDate(dto.getEvaluationStartDate());
+        }
+        fs.setEvaluationEndDate(dto.getEvaluationEndDate());
+
+        LocalDate today = LocalDate.now();
+//       if(!dto.isOpen()){
+//           fs.setEvaluationEndDate(today);
+//       }else{
+//
+//       }
+       // Cập nhật trạng thái isOpen: true nếu chưa hết hạn, false nếu kết thúc trước hôm nay
+       //   fs.setOpen(fs.getEvaluationEndDate() != null && !fs.getEvaluationEndDate().isBefore(today));
+       // fs.setOpen(dto.isOpen());
+        // Lưu và trả về DTO
+        FacultySemesterEntity saved = facultySemesterRepository.save(fs);
+        return facultySemesterMapper.toDTO(saved);
     }
 
 

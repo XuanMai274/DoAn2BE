@@ -8,15 +8,14 @@ import com.doan2.QuanLyDiemRenLuyen.Service.StudentService;
 import com.doan2.QuanLyDiemRenLuyen.Utill.CustomeUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @RestController
 public class ManagerAPI {
@@ -47,6 +46,56 @@ public class ManagerAPI {
         int faculty=customeUserDetails.getAccountEntity().getManagerEntity().getFacultyEntity().getFacultyId();
         return conductFormService.getAverageScoreByFaculty(faculty);
     }
+    @GetMapping("manager/profile")
+    public ResponseEntity<ManagerDTO> getProfile(){
+        // lấy thông tin của người quản lý hiện tại
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !(authentication.getPrincipal() instanceof CustomeUserDetails)) {
+            return ResponseEntity.badRequest().body((ManagerDTO) Collections.emptyList());
+        }
+        CustomeUserDetails user = (CustomeUserDetails) authentication.getPrincipal();
+        int managerId= user.getAccountEntity().getManagerEntity().getManagerId();
+        ManagerDTO managerDTO= managerService.getProfile(managerId);
+        if(managerDTO!=null){
+            return ResponseEntity.ok(managerDTO);
+        }
+        return null;
+    }
+    @PostMapping(
+            value = "/manager/profile/update",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+    )
+    public ResponseEntity<ManagerDTO> updateProfile(
+            @RequestPart("manager") ManagerDTO managerDTO,
+            @RequestPart(value = "avatar", required = false) MultipartFile avatar
+    ) {
+        ManagerDTO result = managerService.updateProfile(managerDTO, avatar);
+        return ResponseEntity.ok(result);
+    }
+    // thay đổi mật khẩu
+    @PostMapping("/manager/change-password")
+    public ResponseEntity<?> changePassword(@RequestBody ChangePasswordRequest req) {
+        try {
+            // lấy thông tin của người quản lý hiện tại
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication == null || !(authentication.getPrincipal() instanceof CustomeUserDetails)) {
+                return ResponseEntity.badRequest().body((ManagerDTO) Collections.emptyList());
+            }
+            CustomeUserDetails user = (CustomeUserDetails) authentication.getPrincipal();
+            int accountId= user.getAccountEntity().getAccountId();
+            req.setAccountId(accountId);
+            boolean result = managerService.changePassword(req);
+            if (result) {
+                return ResponseEntity.ok("Đổi mật khẩu thành công");
+            }
+            return ResponseEntity.badRequest().body("Mật khẩu hiện tại không chính xác");
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi hệ thống");
+        }
+    }
+
+
 
 
 

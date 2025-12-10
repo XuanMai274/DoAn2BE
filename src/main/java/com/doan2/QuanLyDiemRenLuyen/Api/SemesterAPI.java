@@ -76,6 +76,7 @@ public class SemesterAPI {
         List<FacultySemesterDTO> semesterDTOS=facultySemesterService.findByIsOpenTrue(faculty);
         return ResponseEntity.ok(semesterDTOS);
     }
+    // Mở học kì đánh giá rèn luyeen
     @PostMapping("manager/createBatch")
     public ResponseEntity<FacultySemesterDTO> createBatch(@RequestBody FacultySemesterDTO dto) {
         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
@@ -89,6 +90,22 @@ public class SemesterAPI {
         facultyDTO.setFacultyId(faculty);
         dto.setFacultyDTO(facultyDTO);
         FacultySemesterDTO result = facultySemesterService.createBatch(dto);
+        return ResponseEntity.ok(result);
+    }
+    // cập nhật học kì đánh giá rèn luyện
+    @PostMapping("manager/updateBatch")
+    public ResponseEntity<FacultySemesterDTO> updateBatch(@RequestBody FacultySemesterDTO dto) {
+        Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !(authentication.getPrincipal() instanceof CustomeUserDetails userDetails)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body((FacultySemesterDTO) Map.of("message", "Tài khoản không tồn tại hoặc đã bị vô hiệu hóa"));
+        }
+        CustomeUserDetails customeUserDetails=(CustomeUserDetails) userDetails;
+        int faculty=customeUserDetails.getAccountEntity().getManagerEntity().getFacultyEntity().getFacultyId();
+        FacultyDTO facultyDTO=new FacultyDTO();
+        facultyDTO.setFacultyId(faculty);
+        dto.setFacultyDTO(facultyDTO);
+        FacultySemesterDTO result = facultySemesterService.updateBatch(dto);
         return ResponseEntity.ok(result);
     }
     @GetMapping("/manager/semester/opened")

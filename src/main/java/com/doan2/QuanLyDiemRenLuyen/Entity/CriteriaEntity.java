@@ -22,6 +22,8 @@ public class CriteriaEntity {
     private String criteria_detail;
     @Column(name="max_score")
     private int maxScore;
+    @Column(name="is_active")
+    private boolean isActive;
     @ManyToOne
     @JoinColumn(name="criteria_type_id")
     private CriteriaTypeEntity criteriaTypeEntity;

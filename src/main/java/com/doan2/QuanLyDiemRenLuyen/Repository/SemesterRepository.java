@@ -15,18 +15,19 @@ import java.util.List;
 public interface SemesterRepository extends CrudRepository<SemesterEntity,Integer> {
     @NonNull
     List<SemesterEntity> findAll();
+    SemesterEntity findBySemesterId(int semesterId);
     // cách 1:
-    @Query("SELECT s FROM SemesterEntity s " +
-            "WHERE s.isOpen = true " +
-            "AND :now BETWEEN s.evaluationStartDate AND s.evaluationEndDate")
-    List<SemesterEntity> findOpenSemestersWithinEvaluationPeriod(@Param("now") LocalDate now);
+//    @Query("SELECT s FROM SemesterEntity s " +
+//            "WHERE s.isOpen = true " +
+//            "AND :now BETWEEN s.evaluationStartDate AND s.evaluationEndDate")
+//    List<SemesterEntity> findOpenSemestersWithinEvaluationPeriod(@Param("now") LocalDate now);
     // cách 2:
     //List<SemesterEntity> findByIsOpenTrueAndEvaluationStartDateBeforeAndEvaluationEndDateAfter(LocalDateTime now1, LocalDateTime now2);
-    SemesterEntity findBySemesterId(int semesterId);
-    @Query("SELECT s FROM SemesterEntity s WHERE s.evaluationStartDate IS NOT NULL AND s.evaluationEndDate IS NOT NULL AND s.isOpen = false")
-    List<SemesterEntity> findSemesterOpened();
-    @Query("SELECT s FROM SemesterEntity s WHERE s.evaluationStartDate IS  NULL AND s.evaluationEndDate IS  NULL AND s.isOpen = false")
-    List<SemesterEntity> availableSemesters();
+
+//    @Query("SELECT s FROM SemesterEntity s WHERE s.evaluationStartDate IS NOT NULL AND s.evaluationEndDate IS NOT NULL AND s.isOpen = false")
+//    List<SemesterEntity> findSemesterOpened();
+//    @Query("SELECT s FROM SemesterEntity s WHERE s.evaluationStartDate IS  NULL AND s.evaluationEndDate IS  NULL AND s.isOpen = false")
+//    List<SemesterEntity> availableSemesters();
 
 
 

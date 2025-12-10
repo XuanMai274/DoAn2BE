@@ -58,82 +58,82 @@ public class SemesterServiceImplement implements SemesterService {
         return semesterDTOS;
     }
 
-    @Override
-    public List<SemesterDTO> findByIsOpenTrue() {
-        try{
-            List<SemesterEntity> semesterEntityList=semesterRepository.findOpenSemestersWithinEvaluationPeriod(LocalDate.now());
-            if(semesterEntityList!=null){
-                List<SemesterDTO> semesterDTOS=new ArrayList<>();
-                for(SemesterEntity s:semesterEntityList){
-                    semesterDTOS.add(semesterMapper.toDTO(s));
-                }
-                return semesterDTOS;
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        return List.of();
-    }
+//    @Override
+//    public List<SemesterDTO> findByIsOpenTrue() {
+//        try{
+//            List<SemesterEntity> semesterEntityList=semesterRepository.findOpenSemestersWithinEvaluationPeriod(LocalDate.now());
+//            if(semesterEntityList!=null){
+//                List<SemesterDTO> semesterDTOS=new ArrayList<>();
+//                for(SemesterEntity s:semesterEntityList){
+//                    semesterDTOS.add(semesterMapper.toDTO(s));
+//                }
+//                return semesterDTOS;
+//            }
+//        } catch (Exception e) {
+//            throw new RuntimeException(e);
+//        }
+//        return List.of();
+//    }
+//
+//    @Override
+//    public SemesterDTO CreateBatch(SemesterDTO semesterDTO) {
+//        try{
+//            SemesterEntity semesterEntity= semesterRepository.findBySemesterId(semesterDTO.getSemesterId());
+//            if(semesterEntity!=null){
+//                // tiến hành cập nhật
+//                semesterEntity.setOpen(true);
+//                semesterEntity.setEvaluationStartDate(semesterDTO.getEvaluationStartDate());
+//                semesterEntity.setEvaluationEndDate(semesterDTO.getEvaluationEndDate());
+//                semesterRepository.save(semesterEntity);
+//                return semesterMapper.toDTO(semesterEntity);
+//            }
+//        } catch (Exception e) {
+//            throw new RuntimeException(e);
+//        }
+//        return null;
+//    }
+//
+//    @Override
+//    public List<SemesterDTO> findSemesterOpened() {
+//        try{
+//            List<SemesterEntity> semesterEntityList=semesterRepository.findSemesterOpened();
+//            List<SemesterDTO> semesterDTOS=new ArrayList<>();
+//            if(semesterEntityList!=null){
+//                for(SemesterEntity s:semesterEntityList){
+//                    semesterDTOS.add(semesterMapper.toDTO(s));
+//                }
+//                return semesterDTOS;
+//            }
+//        } catch (Exception e) {
+//            throw new RuntimeException(e);
+//        }
+//        return List.of();
+//    }
+//
+//    @Override
+//    public List<SemesterDTO> availableSemesters() {
+//        try{
+//            List<SemesterEntity> semesterEntityList=semesterRepository.availableSemesters();
+//            List<SemesterDTO> semesterDTOS=new ArrayList<>();
+//            if(semesterEntityList!=null){
+//                for(SemesterEntity s:semesterEntityList){
+//                    semesterDTOS.add(semesterMapper.toDTO(s));
+//                }
+//                return semesterDTOS;
+//            }
+//        } catch (Exception e) {
+//            throw new RuntimeException(e);
+//        }
+//        return List.of();
+//    }
 
-    @Override
-    public SemesterDTO CreateBatch(SemesterDTO semesterDTO) {
-        try{
-            SemesterEntity semesterEntity= semesterRepository.findBySemesterId(semesterDTO.getSemesterId());
-            if(semesterEntity!=null){
-                // tiến hành cập nhật
-                semesterEntity.setOpen(true);
-                semesterEntity.setEvaluationStartDate(semesterDTO.getEvaluationStartDate());
-                semesterEntity.setEvaluationEndDate(semesterDTO.getEvaluationEndDate());
-                semesterRepository.save(semesterEntity);
-                return semesterMapper.toDTO(semesterEntity);
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        return null;
-    }
-
-    @Override
-    public List<SemesterDTO> findSemesterOpened() {
-        try{
-            List<SemesterEntity> semesterEntityList=semesterRepository.findSemesterOpened();
-            List<SemesterDTO> semesterDTOS=new ArrayList<>();
-            if(semesterEntityList!=null){
-                for(SemesterEntity s:semesterEntityList){
-                    semesterDTOS.add(semesterMapper.toDTO(s));
-                }
-                return semesterDTOS;
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        return List.of();
-    }
-
-    @Override
-    public List<SemesterDTO> availableSemesters() {
-        try{
-            List<SemesterEntity> semesterEntityList=semesterRepository.availableSemesters();
-            List<SemesterDTO> semesterDTOS=new ArrayList<>();
-            if(semesterEntityList!=null){
-                for(SemesterEntity s:semesterEntityList){
-                    semesterDTOS.add(semesterMapper.toDTO(s));
-                }
-                return semesterDTOS;
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        return List.of();
-    }
-
-    @Override
-    public SemesterDTO update(SemesterDTO semesterDTO) {
-        // lấy lên học kì hiện tại theo id
-        SemesterEntity semesterEntity=semesterRepository.findBySemesterId(semesterDTO.getSemesterId());
-        if(semesterEntity!=null){
-
-        }
-        return null;
-    }
+//    @Override
+//    public SemesterDTO update(SemesterDTO semesterDTO) {
+//        // lấy lên học kì hiện tại theo id
+//        SemesterEntity semesterEntity=semesterRepository.findBySemesterId(semesterDTO.getSemesterId());
+//        if(semesterEntity!=null){
+//
+//        }
+//        return null;
+//    }
 }

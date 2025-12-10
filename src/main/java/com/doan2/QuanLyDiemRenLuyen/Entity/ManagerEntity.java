@@ -25,6 +25,8 @@ public class ManagerEntity {
     private String phoneNumber;
     @Column(name="status")
     private String status;
+    @Column(name="avatar_url")
+    private String avatarUrl;
     @OneToMany(mappedBy = "managerEntity")
     private List<NotificationEntity> notificationEntity;
     @ManyToOne

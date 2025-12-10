@@ -12,7 +12,7 @@ public class ManagerDTO {
     private String email;
     private String phoneNumber;
     private String status;
-
+    private String avatarUrl;
     private FacultyDTO facultyEntity;
     private AccountDTO accountEntity;
     private List<NotificationDTO> notificationEntity;
