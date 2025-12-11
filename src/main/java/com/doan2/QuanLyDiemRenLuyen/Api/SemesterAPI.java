@@ -47,7 +47,7 @@ public class SemesterAPI {
         return ResponseEntity.ok(semesters);
     }
     // hàm sửa học kì
-    @PostMapping("/manager/semester/update")
+    @PostMapping("/manager1/semester/update")
     public ResponseEntity<SemesterDTO> update(@RequestBody SemesterDTO semesterDTO){
         try{
             SemesterDTO semesterDTO1=semesterService.addSemester(semesterDTO);

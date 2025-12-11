@@ -137,11 +137,11 @@ public class ConductFormServiceImplement implements ConductFormService {
                             .orElse(null);
 
                     if (dto != null) {
-                        detailEntity.setStaff_score(dto.getClassMonitorScore());
+                        detailEntity.setStaff_score(dto.getStaffScore());
                     }
                 }
                 conductFormEntity.setStatus("APPROVED");
-                conductFormEntity.setStaff_score(conductFormDTO.getClassMonitorScore());
+                conductFormEntity.setStaff_score(conductFormDTO.getStaffScore());
                 conductFormEntity.setUpdatedDate(LocalDateTime.now());
                 conductFormEntity.setManagerAccept(conductFormDTO.getManagerAccept());
                 conductFormRepository.save(conductFormEntity);
