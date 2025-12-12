@@ -10,6 +10,8 @@ import java.util.List;
 
 @Repository
 public interface StudentRepository extends CrudRepository<StudentEntity,Integer> {
+    // tìm sinh viên theo email;
+    StudentEntity findByEmail(String email);
     @Query("select s from StudentEntity s where s.accountEntity.accountId = :accountId ")
     StudentEntity findByAccountId(@Param("accountId") int accountId);
     @Query("select s from StudentEntity s where s.accountEntity.username = :username ")

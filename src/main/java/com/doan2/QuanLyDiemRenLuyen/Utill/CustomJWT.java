@@ -65,7 +65,7 @@ public class CustomJWT {
         // Chuyển thời gian `issuedAt` và `expirationTime` sang giờ Việt Nam (UTC+7)( Đây là thời gian bắt đầu của token và access token)
         LocalDateTime issuedAtVietnam = issuedAt.atZone(ZoneOffset.UTC).withZoneSameInstant(vietnamZone).toLocalDateTime();
         // Thêm 180 giây để tính thời gian hết hạn (Expiration) theo múi giờ UTC ( đây là thời gian hết hạn của token)
-        LocalDateTime expirationTime = LocalDateTime.now(ZoneOffset.UTC).plus(1800, ChronoUnit.SECONDS);
+        LocalDateTime expirationTime = LocalDateTime.now(ZoneOffset.UTC).plus(180, ChronoUnit.SECONDS);
         LocalDateTime expirationTimeVietnam = expirationTime.atZone(ZoneOffset.UTC).withZoneSameInstant(vietnamZone).toLocalDateTime();
         // tạo thời gian hết hạn cho refresh token
         LocalDateTime expirationTimeRefreshToken = LocalDateTime.now(ZoneOffset.UTC).plus(3600, ChronoUnit.SECONDS);

@@ -14,7 +14,9 @@ import com.doan2.QuanLyDiemRenLuyen.Mapper.ManagerMapper;
 import com.doan2.QuanLyDiemRenLuyen.Repository.AccountRepository;
 import com.doan2.QuanLyDiemRenLuyen.Repository.FacultyRepository;
 import com.doan2.QuanLyDiemRenLuyen.Repository.ManagerRepository;
+import com.doan2.QuanLyDiemRenLuyen.Service.EmailService;
 import com.doan2.QuanLyDiemRenLuyen.Service.ManagerService;
+import com.doan2.QuanLyDiemRenLuyen.Utill.PasswordGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -40,7 +42,8 @@ public class ManagerServiceImplement implements ManagerService {
     FacultyRepository facultyRepository;
     @Autowired
     private Cloudinary cloudinary;
-
+    @Autowired
+    EmailService emailService;
     @Override
     public ManagerDTO findByAccountId(int id) {
         try {
@@ -219,6 +222,51 @@ public class ManagerServiceImplement implements ManagerService {
         }
 
         return dto;
+    }
+
+    // phần đặt lại mật khẩu cho quản lý
+
+    @Transactional
+    @Override
+    public void resetManagerPasswordAndSendEmail(int managerId) {
+        ManagerEntity manager = managerRepository.findById(managerId)
+                .orElseThrow(() -> new RuntimeException("Manager not found: " + managerId));
+
+        AccountEntity account = manager.getAccountEntity();
+        if (account == null) {
+            throw new RuntimeException("Không tìm thấy tài khoản cho manager id=" + managerId);
+        }
+
+        // 1. Tạo mật khẩu tạm
+        String tempPassword = PasswordGenerator.random(8); // 8 ký tự, bạn có thể đổi
+
+        // 2. Hash mật khẩu
+        String encoded = passwordEncoder.encode(tempPassword);
+        account.setPassword(encoded);
+        accountRepository.save(account); // lưu mật khẩu mới đã hash
+
+        // 3. Gửi email HTML
+        String subject = "Mật khẩu tạm thời - Quản lý hệ thống";
+        String html = buildResetEmailHtml(manager.getFullname(), tempPassword);
+        emailService.sendEmail(manager.getEmail(), subject, html);
+
+        // 4. (tuỳ chọn) ghi log / notification
+    }
+    @Override
+    public String buildResetEmailHtml(String fullName, String tempPassword) {
+        // đơn giản, bạn có thể thêm logo, style, footer
+        String content = "<div style='font-family: Arial, sans-serif; color: #333; line-height:1.6;'>"
+                + "<h3 style='color:#2c3e50'>Mật khẩu tạm thời</h3>"
+                + "<p>Chào <strong>" + (fullName == null ? "" : fullName) + "</strong>,</p>"
+                + "<p>Quản trị hệ thống đã đặt lại mật khẩu cho tài khoản của bạn.</p>"
+                + "<p><strong>Mật khẩu tạm thời:</strong></p>"
+                + "<p style='font-size:18px; font-weight:700; background:#f4f6f8; padding:10px; display:inline-block;'>"
+                + tempPassword + "</p>"
+                + "<p>Vui lòng đăng nhập và <strong>đổi mật khẩu ngay</strong> để bảo mật tài khoản.</p>"
+                + "<hr/>"
+                + "<p>Trân trọng,<br/>Ban Quản Trị Hệ Thống</p>"
+                + "</div>";
+        return content;
     }
 }
 

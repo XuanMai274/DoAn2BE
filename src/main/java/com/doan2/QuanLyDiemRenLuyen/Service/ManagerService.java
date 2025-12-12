@@ -16,4 +16,6 @@ public interface ManagerService {
     public List<ManagerDTO> findAllManager();
     public ManagerDTO createManager(ManagerDTO dto);
     public ManagerDTO updateManager( ManagerDTO dto);
+    public void resetManagerPasswordAndSendEmail(int managerId);
+    public String buildResetEmailHtml(String fullName, String tempPassword);
 }

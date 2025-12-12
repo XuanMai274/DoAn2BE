@@ -9,6 +9,7 @@ import com.doan2.QuanLyDiemRenLuyen.Service.StudentService;
 import com.doan2.QuanLyDiemRenLuyen.Utill.CustomJWT;
 import com.doan2.QuanLyDiemRenLuyen.Utill.CustomeUserDetailService;
 import com.doan2.QuanLyDiemRenLuyen.Utill.CustomeUserDetails;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -87,6 +88,23 @@ public class AuthenticateAPI {
             return ResponseEntity.ok(authenticationResponse);
         }
         return null;
+    }
+    // refresh token
+    @PostMapping("/refreshToken")
+    public ResponseEntity<AuthenticationResponse> refreshToken(HttpServletRequest request) throws Exception {
+        // lấy refresh token từ header
+        String refreshToken=request.getHeader("Authorization-Refresh");
+        // kiểm tra refresh token có hợp lệ không
+        if(jwt.validateToken(refreshToken)==200){
+            AuthenticationResponse authenticationResponse=new AuthenticationResponse();
+            authenticationResponse.setAccessToken(jwt.refreshToken(jwt.extractUserName(refreshToken),Integer.parseInt(jwt.extractUserId(refreshToken)),"admin"));
+            authenticationResponse.setRefreshToken(refreshToken);
+            return ResponseEntity.ok(authenticationResponse);
+        }
+        else{
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(null); // Trả về 500 nếu có lỗi hệ thống
+        }
     }
     private String determineRole(List<GrantedAuthority> authorities) {
         if (authorities.contains(new SimpleGrantedAuthority("CREATE")) &&

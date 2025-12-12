@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
+
 @RestController
 public class Manager1API {
     @Autowired
@@ -35,5 +37,11 @@ public class Manager1API {
     @PutMapping("/manager1/manager/update")
     public ManagerDTO updateManager(@RequestBody ManagerDTO dto) {
         return managerService.updateManager(dto);
+    }
+
+    @PostMapping("/manager1/reset-password/{managerId}")
+    public ResponseEntity<?> resetManagerPassword(@PathVariable int managerId) {
+        managerService.resetManagerPasswordAndSendEmail(managerId);
+        return ResponseEntity.ok(Map.of("message", "Mật khẩu tạm thời đã được gửi đến email người dùng."));
     }
 }

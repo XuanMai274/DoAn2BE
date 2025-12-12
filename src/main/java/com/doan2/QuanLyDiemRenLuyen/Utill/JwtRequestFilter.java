@@ -28,7 +28,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         String path = request.getServletPath();
         boolean skip = path.equals("/authenticate") || path.equals("/register")
                 || path.equals("/refreshToken") || path.startsWith("/public/")
-                || path.startsWith("/uploads/");
+                || path.startsWith("/uploads/")|| path.startsWith("/authenticate/");
         System.out.println("shouldNotFilter path=" + path + " => " + skip);
         return skip;
     }

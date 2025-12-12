@@ -98,7 +98,7 @@ public class SecurityConfig implements WebMvcConfigurer {
         http.csrf(csrf -> csrf.disable()) // Tắt CSRF
                 . cors(cors -> cors.configurationSource(corsConfigurationSource())) //Bật CORS
                 .  authorizeHttpRequests( authorize -> authorize
-                        .requestMatchers("/authenticate","/public/**").permitAll()
+                        .requestMatchers("/authenticate/**","/public/**","/refreshToken/**").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/manager/**").hasAuthority("MANAGER")
                         .requestMatchers("/manager1/**").hasAuthority("MANAGER_1")
