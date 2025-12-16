@@ -15,9 +15,18 @@ public class ForgotPasswordAPI {
     private PasswordResetService passwordResetService;
 
     @PostMapping("/forgot-password/{email}")
-    public ResponseEntity<?> forgotPassword(@PathVariable("email") String email) {
-        passwordResetService.generateResetToken(email);
-        return ResponseEntity.ok(Map.of("message", "Vui lòng kiê tra email để đặt lại mật khẩu!"));
+    public ResponseEntity<?> forgotPassword(@PathVariable String email) {
+        boolean success = passwordResetService.generateResetToken(email);
+
+        if (!success) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(Map.of("message", "Email không tồn tại"));
+        }
+
+        return ResponseEntity.ok(
+                Map.of("message", "Vui lòng kiểm tra email để đặt lại mật khẩu!")
+        );
     }
 
     @PostMapping("/reset-password")

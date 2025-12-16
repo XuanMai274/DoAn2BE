@@ -35,8 +35,8 @@ public class ManagerAPI {
         return response;
     }
 
-    @GetMapping("manager/statistical/avgClass")
-    public List<ClassAverageScoreDTO> getAverageScoreByFaculty(){
+    @GetMapping("manager/statistical/avgClass/{semesterId}")
+    public List<ClassAverageScoreDTO> getAverageScoreByFaculty(@PathVariable("semesterId")int semesterId){
         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !(authentication.getPrincipal() instanceof CustomeUserDetails userDetails)) {
             return (List<ClassAverageScoreDTO>) ResponseEntity.status(HttpStatus.UNAUTHORIZED)
@@ -44,7 +44,7 @@ public class ManagerAPI {
         }
         CustomeUserDetails customeUserDetails=(CustomeUserDetails) userDetails;
         int faculty=customeUserDetails.getAccountEntity().getManagerEntity().getFacultyEntity().getFacultyId();
-        return conductFormService.getAverageScoreByFaculty(faculty);
+        return conductFormService.getAverageScoreByFaculty(faculty,semesterId);
     }
     @GetMapping("manager/profile")
     public ResponseEntity<ManagerDTO> getProfile(){

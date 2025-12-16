@@ -76,6 +76,20 @@ public class SemesterAPI {
         List<FacultySemesterDTO> semesterDTOS=facultySemesterService.findByIsOpenTrue(faculty);
         return ResponseEntity.ok(semesterDTOS);
     }
+    @GetMapping("/student/semester/Open")
+    public ResponseEntity<List<FacultySemesterDTO>> findByIsOpenTrueForStudent(){
+        // lấy id theo khoa hiện tại
+        Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !(authentication.getPrincipal() instanceof CustomeUserDetails userDetails)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Collections.singletonList((FacultySemesterDTO) Map.of("message", "Tài khoản không tồn tại hoặc đã bị vô hiệu hóa")));
+        }
+        CustomeUserDetails customeUserDetails=(CustomeUserDetails) userDetails;
+        int studentId=customeUserDetails.getAccountEntity().getStudentEntity().getStudentId();
+        int faculty=customeUserDetails.getAccountEntity().getStudentEntity().getClassId().getFacultyId().getFacultyId();
+        List<FacultySemesterDTO> semesterDTOS=facultySemesterService.findByIsOpenForStudent(faculty,studentId);
+        return ResponseEntity.ok(semesterDTOS);
+    }
     // Mở học kì đánh giá rèn luyeen
     @PostMapping("manager/createBatch")
     public ResponseEntity<FacultySemesterDTO> createBatch(@RequestBody FacultySemesterDTO dto) {

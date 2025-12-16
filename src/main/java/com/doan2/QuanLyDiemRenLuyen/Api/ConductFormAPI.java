@@ -149,7 +149,7 @@ public class ConductFormAPI {
             @RequestPart(value = "detailMeta", required = false) List<DetailMetaDTO> detailMetaList) {
 
         try {
-            // === 1. KIỂM TRA QUYỀN ===
+            //1. KIỂM TRA QUYỀN
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             if (auth == null || !(auth.getPrincipal() instanceof CustomeUserDetails)) {
                 return ResponseEntity.status(401).body("Unauthorized");
@@ -164,7 +164,7 @@ public class ConductFormAPI {
                 return ResponseEntity.status(403).body("Bạn không có quyền sửa phiếu này");
             }
 
-            // === 2. LẤY BẢN GỐC TỪ DB ĐỂ GIỮ NGUYÊN CÁC TRƯỜNG KHÔNG THAY ĐỔI ===
+            //2. LẤY BẢN GỐC TỪ DB ĐỂ GIỮ NGUYÊN CÁC TRƯỜNG KHÔNG THAY ĐỔI
             ConductFormDTO formToUpdate = conductFormService.findByConductFormId(conductFormId);
             if (formToUpdate == null) return ResponseEntity.notFound().build();
 
@@ -174,7 +174,7 @@ public class ConductFormAPI {
             formToUpdate.setClassMonitorScore(dto.getClassMonitorScore());
             formToUpdate.setStaffScore(dto.getStaffScore());
             formToUpdate.setStatus(dto.getStatus());
-            // === CẬP NHẬT CÁC TRƯỜNG TRONG DETAIL TỪ DTO GỬI LÊN ===
+            //CẬP NHẬT CÁC TRƯỜNG TRONG DETAIL TỪ DTO GỬI LÊN
             if (dto.getConductFormDetailList() != null) {
                 for (ConductFormDetailDTO updatedDetail : dto.getConductFormDetailList()) {
                     if (updatedDetail.getCriteria() == null || updatedDetail.getCriteria().getCriteriaId() == 0) {
@@ -193,11 +193,10 @@ public class ConductFormAPI {
                         targetDetail.setComment(updatedDetail.getComment());
                         targetDetail.setClassMonitorScore(updatedDetail.getClassMonitorScore());
                         targetDetail.setStaffScore(updatedDetail.getStaffScore());
-                        // Nếu có thêm trường nào khác thì thêm vào đây
                     }
                 }
             }
-            // === 3. CHỈ XỬ LÝ FILE QUA detailMetaList – KHÔNG ĐỂ DTO GHI ĐÈ ===
+            //3. CHỈ XỬ LÝ FILE QUA detailMetaList – KHÔNG ĐỂ DTO GHI ĐÈ
             if (detailMetaList != null && !detailMetaList.isEmpty()) {
                 int fileIndex = 0;
 
@@ -205,7 +204,7 @@ public class ConductFormAPI {
                     if (meta.getCriteriaId() == null) {
                         return ResponseEntity.badRequest().body("Thiếu criteriaId");
                     }
-
+                    // Lấy lên tất cả các tiêu chí cần xử lý file với điều kiện trong meta data có tồn tại mã tiêu chí cần upload
                     ConductFormDetailDTO targetDetail = formToUpdate.getConductFormDetailList().stream()
                             .filter(d -> d.getCriteria() != null &&
                                     meta.getCriteriaId().equals(d.getCriteria().getCriteriaId()))
@@ -242,7 +241,7 @@ public class ConductFormAPI {
             }
             // → Các detail KHÔNG có trong detailMetaList → giữ nguyên hoàn toàn (file + publicId)
 
-            // === 4. LƯU LẠI – CHỈ 1 LẦN DUY NHẤT ===
+            // 4. LƯU LẠI
             ConductFormDTO saved = conductFormService.addConductForm(formToUpdate);
             return ResponseEntity.ok(saved);
 

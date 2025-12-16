@@ -6,10 +6,13 @@ import com.doan2.QuanLyDiemRenLuyen.DTO.ConductFormDetailDTO;
 import com.doan2.QuanLyDiemRenLuyen.DTO.StudentVsClassDTO;
 import com.doan2.QuanLyDiemRenLuyen.Entity.ConductFormDetailEntity;
 import com.doan2.QuanLyDiemRenLuyen.Entity.ConductFormEntity;
+import com.doan2.QuanLyDiemRenLuyen.Entity.StudentEntity;
 import com.doan2.QuanLyDiemRenLuyen.Mapper.ConductFormMapper;
 import com.doan2.QuanLyDiemRenLuyen.Mapper.SemesterMapper;
 import com.doan2.QuanLyDiemRenLuyen.Repository.ConductFormRepository;
+import com.doan2.QuanLyDiemRenLuyen.Repository.StudentRepository;
 import com.doan2.QuanLyDiemRenLuyen.Service.ConductFormService;
+import com.doan2.QuanLyDiemRenLuyen.Service.StudentService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,6 +31,8 @@ public class ConductFormServiceImplement implements ConductFormService {
     ConductFormMapper conductFormMapper;
     @Autowired
     SemesterMapper semesterMapper;
+    @Autowired
+    StudentRepository studentRepository;
     // mở một Transaction để vừa có thể thêm vào ConductForm vừa có tể thêm vào conductFormDetail
     @Transactional
     @Override
@@ -59,6 +64,7 @@ public class ConductFormServiceImplement implements ConductFormService {
                         detailEntity.setConductFormEntity(conductFormEntity);
                     }
                 }
+                conductFormEntity.setCreateAt(LocalDateTime.now());
                 // Lưu xuống database
                 ConductFormEntity savedEntity = conductFormRepository.save(conductFormEntity);
 
@@ -189,15 +195,20 @@ public class ConductFormServiceImplement implements ConductFormService {
 
     @Override
     public List<StudentVsClassDTO> compareStudentVsClass(int studentId) {
+        //Lấy lên lớp của sinh vien
+        StudentEntity studentEntity= studentRepository.findByStudentId(studentId);
+        int classId=studentEntity.getClassId().getClassId();
+        // lay tất cả phiếu rèn luyện của sinh viên
         List<ConductFormEntity> studentForms = conductFormRepository.findByStudentId(studentId);
-
+        // với mỗi PRL(hoc ki) của sinh viên thì lấy lên tất cả các PRL cua lop
         return studentForms.stream().map(form -> {
             // Lấy tất cả phiếu của học kỳ này
-            List<ConductFormEntity> semesterForms = conductFormRepository.findBySemesterId(form.getSemesterEntity().getSemesterId());
+            List<ConductFormEntity> semesterForms = conductFormRepository.findBySemesterAndClass(form.getSemesterEntity().getSemesterId(),classId);
 
             // Tính điểm trung bình lớp
             double classAvg = semesterForms.stream()
                     .mapToInt(ConductFormEntity::getStaff_score)
+                    .filter(score -> score != 0)
                     .average()
                     .orElse(0);
 
@@ -230,8 +241,8 @@ public class ConductFormServiceImplement implements ConductFormService {
     }
 
     @Override
-    public List<ClassAverageScoreDTO> getAverageScoreByFaculty(int facultyId) {
-        return conductFormRepository.findAverageStaffScoreByFaculty(facultyId);
+    public List<ClassAverageScoreDTO> getAverageScoreByFaculty(int facultyId,int semesterId) {
+        return conductFormRepository.findAverageStaffScoreByFacultyAndSemester(facultyId,semesterId);
     }
 
 }

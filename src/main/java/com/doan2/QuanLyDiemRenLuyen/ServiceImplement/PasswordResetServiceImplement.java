@@ -30,11 +30,11 @@ public class PasswordResetServiceImplement implements PasswordResetService {
     private PasswordEncoder passwordEncoder;
     @Override
     @Transactional
-    public void generateResetToken(String email) {
+    public boolean generateResetToken(String email) {
         // Tìm người dùng qua email student
         StudentEntity student = studentRepository.findByEmail(email);
         if (student == null) {
-            throw new RuntimeException("Email không tồn tại");
+            return false;
         }
         AccountEntity account = student.getAccountEntity();
 
@@ -83,6 +83,7 @@ public class PasswordResetServiceImplement implements PasswordResetService {
                         + "</div>";
 
         emailService.sendEmail(email, subject, content);
+        return true;
     }
     @Transactional
     @Override

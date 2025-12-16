@@ -78,6 +78,19 @@ public class FacultySemesterServiceImplement implements FacultySemesterService {
     }
 
     @Override
+    public List<FacultySemesterDTO> findByIsOpenForStudent(int facultyId,int studentId) {
+        List<FacultySemesterEntity> list = facultySemesterRepository
+                .findOpenSemestersStudentNotEvaluated(facultyId,studentId, LocalDate.now());
+
+        List<FacultySemesterDTO> result = new ArrayList<>();
+
+        for (FacultySemesterEntity fs : list) {
+            result.add(facultySemesterMapper.toDTO(fs));
+        }
+        return result;
+    }
+
+    @Override
     public List<SemesterDTO> availableSemesters(int facultyId) {
         List<SemesterEntity> list = facultySemesterRepository.findAvailableSemesters(facultyId);
 

@@ -23,8 +23,26 @@ public interface FacultySemesterRepository extends JpaRepository<FacultySemester
     List<FacultySemesterEntity> findOpenSemestersWithinEvaluationPeriod(
             @Param("facultyId") int facultyId,
             @Param("now") LocalDate now);
-    // danh sách học kì đã mở
-//    @Query("""
+    // danh sách học kì đã mở theo từng học sinh, đã đánh giá r thì không hiện nữa
+    @Query("""
+        SELECT fs
+        FROM FacultySemesterEntity fs
+        WHERE fs.faculty.facultyId = :facultyId
+          AND :now BETWEEN fs.evaluationStartDate AND fs.evaluationEndDate
+          AND NOT EXISTS (
+              SELECT cf
+              FROM ConductFormEntity cf
+              WHERE cf.semesterEntity.semesterId = fs.semester.semesterId
+                AND cf.studentEntity.studentId = :studentId
+          )
+    """)
+    List<FacultySemesterEntity> findOpenSemestersStudentNotEvaluated(
+            @Param("facultyId") int facultyId,
+            @Param("studentId") int studentId,
+            @Param("now") LocalDate now
+    );
+
+    //    @Query("""
 //            SELECT fs FROM FacultySemesterEntity fs
 //            WHERE fs.faculty.facultyId = :facultyId
 //            AND fs.isOpen = FALSE

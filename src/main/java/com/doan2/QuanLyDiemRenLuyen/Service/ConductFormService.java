@@ -17,5 +17,5 @@ public interface ConductFormService {
     List<ConductFormDTO> findAllConductFormByStudent(int student);
     List<StudentVsClassDTO> compareStudentVsClass(int studentId);
     StudentVsClassDTO compareLatestSemester(int studentId);
-    public List<ClassAverageScoreDTO> getAverageScoreByFaculty(int facultyId);
+    public List<ClassAverageScoreDTO> getAverageScoreByFaculty(int facultyId,int semesterId);
 }
